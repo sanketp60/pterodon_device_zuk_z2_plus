@@ -1,21 +1,16 @@
-# mount point    fstype  device                                  device2         flags
-/boot            emmc    /dev/block/bootdevice/by-name/boot
-/cache           ext4    /dev/block/bootdevice/by-name/cache
-/recovery        emmc    /dev/block/bootdevice/by-name/recovery                  flags=backup=1
-/system          ext4    /dev/block/bootdevice/by-name/system
-/system_image    emmc    /dev/block/bootdevice/by-name/system                    flags=display="System (Image)";backup=1;flashimg=1
-/vendor          ext4    /dev/block/bootdevice/by-name/factory                   flags=display="Vendor";wipeingui
-/vendor_image    emmc    /dev/block/bootdevice/by-name/factory                   flags=display="Vendor (Image)";backup=1;flashimg=1
-/data            ext4    /dev/block/bootdevice/by-name/userdata                  flags=encryptable=footer;length=-16384
-/firmware        vfat    /dev/block/bootdevice/by-name/modem                     flags=display="Firmware";mounttodecrypt;fsflags=ro
-/firmware_image  emmc    /dev/block/bootdevice/by-name/modem                     flags=display="Firmware (image)";backup=1;flashimg=1
-/misc            emmc    /dev/block/bootdevice/by-name/misc
-/efs1            emmc    /dev/block/bootdevice/by-name/modemst1                  flags=backup=1;display=EFS
-/efs2            emmc    /dev/block/bootdevice/by-name/modemst2                  flags=backup=1;subpartitionof=/efs1
-/efsc            emmc    /dev/block/bootdevice/by-name/fsc                       flags=backup=1;subpartitionof=/efs1
-/efsg            emmc    /dev/block/bootdevice/by-name/fsg                       flags=backup=1;subpartitionof=/efs1
-/persist         ext4    /dev/block/bootdevice/by-name/persist                   flags=display="Persist";backup=1
-/splash          emmc    /dev/block/bootdevice/by-name/splash                    flags=display="Splash";backup=1;flashimg=1
+#<src>                                                       <mnt_point>          <type>  <mnt_flags and options>                                                                              <fs_mgr_flags>
+/dev/block/bootdevice/by-name/boot                           /boot                emmc    defaults                                                                                             defaults
+/dev/block/bootdevice/by-name/recovery                       /recovery            emmc    defaults                                                                                             defaults
+/dev/block/bootdevice/by-name/system                         /system              ext4    ro,barrier=1                                                                                         wait,recoveryonly
+/dev/block/bootdevice/by-name/userdata                       /data                f2fs    nosuid,nodev,noatime,inline_xattr,data_flush                                                         wait,check,latemount,encryptable=footer
+/dev/block/bootdevice/by-name/cache                          /cache               f2fs    nosuid,nodev,noatime,inline_xattr,flush_merge,data_flush                                             wait,check
+/dev/block/bootdevice/by-name/persist                        /mnt/vendor/persist  ext4    nosuid,nodev,noatime,barrier=1                                                                       wait
+/dev/block/bootdevice/by-name/modem                          /vendor/firmware_mnt vfat    ro,shortname=lower,uid=0,gid=1000,dmask=227,fmask=337,context=u:object_r:firmware_file:s0                                             wait
+/dev/block/bootdevice/by-name/dsp                            /vendor/dsp          ext4    ro,nosuid,nodev,barrier=1,context=u:object_r:adsprpcd_file:s0                                                                            wait
+/dev/block/bootdevice/by-name/misc                           /misc                emmc    defaults                                                                                             defaults
+/dev/block/bootdevice/by-name/factory                        /vendor              ext4    ro,barrier=1                                                                                         wait,recoveryonly
+/dev/block/bootdevice/by-name/bluetooth                      /vendor/bt_firmware  vfat    ro,shortname=lower,uid=1002,gid=3002,dmask=222,fmask=333,context=u:object_r:bt_firmware_file:s0                                             wait
+/dev/block/bootdevice/by-name/misc                           /misc                emmc    defaults                                                                                             defaults
+/dev/block/zram0                                             none                 swap    defaults                                                                                             zramsize=536870912,max_comp_streams=4
 
-# Removable storage
-/usb_otg         vfat    /dev/block/sda1                         /dev/block/sda  flags=display="USB-OTG";storage;wipeingui;removable
+/devices/soc/6a00000.ssusb/6a00000.dwc3/xhci-hcd.0.auto/usb* auto                 auto    defaults                                                                                             voldmanaged=usbdisk:auto
